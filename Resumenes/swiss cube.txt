@@ -1,0 +1,73 @@
+Swiss Cube
+s3-b-c-set-1-2-mission_systema_overview
+
+
+CDMS: Control data management system
+EPS: Electric power system
+ACDS: Attitude Control and determination system
+COM: sistema de Comunicación
+
+El CDMS provee varios servicios a los otros subsistemas y contiene el scheduler.
+
+La información generada por cada subsistema se manda al CDMS a pedido de éste, por medio de I2C. La data se elige, se lepone fecha y se almacena o se usa para procesamiento.
+
+Apenas el RF recibe la señal comando desde Tierra, el microcontrolador del EPS "apaga" el beacon (una señal generada por el EPS para poder identificar el satélite desde Tierra), prende el transmisor RF y los comandos son recibidos por el CDMS.
+
+El COM, ADCS y EPS tienen un microcontrolador MSP430F1611, mientras que el CDMs, tiene un ATMEL ARM AT91M55800A OBC(on-board computer). Sin embargo, como este porcesador no tiene capacidad de hardware I2C, se decidió linkearlo por un bus de datos SPI a un MSP430F1611, que será usado como un puente I2C-SPI.
+
+ARQUITECTURA
+S3-B-CDMs-1-0-CDMS.pdf
+
+funciones principales del CDMS:
+- perform the scheduling of the space system functions
+- perform data storage for the space system
+- maintain life statuses of the space system
+- process data coming out of sensors
+- execute the attitude determination and control algorithms
+
+Modos de funcionamiento:
+- OFF: todo el subsistema está apagado
+- STAND-BY: en este estado, solo el CDMS puede estar en low power
+- INITIALIZATION: este es un modo transitorio después de un power on, dónde el CDMS comienza a inicializar todas las funciones.
+- OPERATIONAL: En este modo el CDMS está completamente en operación
+- SHUTDOWN: Este es un modo transitorio que lleva al modo OFF
+
+Requerimientos de memoria:
+- Para el final boot program: CDMS debe proveer 512Kb
+- Para el SW de aplicación y el almacenamiento de información: 2Mb
+- para la memoria de ejecución del programa y datos temporales: 512Kb
+
+ROM: 512k
+FLASH; 4M
+RAM: 512k
+
+Requerimientos eléctricos del CDMS:
+- Modo OFF: no consume
+- Modo STAND BY: 1mW
+- Modo OPERATIONAL: promedio de 150mW y picos de 250mW
+
+SW PERFORMANCE
+
+- Timestamp: para estampar fecha y hora de cada imagen que venga del payload
+- CDMS Status 1: para entregar la temperatura de la placa
+- CDMS Status 2: para entregar el estatus orbital
+- Determinación de la posición orbital: Durante la observación, la posición orbital del sistema espacial debe ser conocido por el sistema CDMS
+
+
+
+S3-B-CDMS-1-0-CDMS.pdf
+
+El CDMS generará un tiempo de reloj de referencia. El formato debe ser compatible con año, mes, día, hora, minuto y segundo.
+Deberá ser capaz de proveer:
+- Temperatura de la placa
+- fuente de reseteo
+- estatus de modo
+
+Interfaces
+- tratamiento de data que viene de sensores
+- señales de energía de GND y 3.3V
+- bus I2C
+- una señal externa de wake up
+- una señal externa de selección de programa de booteo
+- señales misceláneas de I/O (4 entradas análogas, 16 digitales I/O, test)
+- un JTAG como interfaz de testeo y debuggeo 
