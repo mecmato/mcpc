@@ -15,7 +15,7 @@ on_i2c_rcv rcv_cb;
 Definicion de funciones
 */
 int i2c_set_rcv_callback (on_i2c_rcv cb);
-int i2c_transmit (int dest, char* data);
+int i2c_transmit (int dest, int len, char* data);
 
 
 /**
@@ -24,7 +24,7 @@ int i2c_transmit (int dest, char* data);
  * La salida es un entero que establece si la transmision fue realizada con exito o no.
  */
 
-int i2c_transmit (int dest, char* data)
+int i2c_transmit (int dest, int len, char* data)
 {
 
 
