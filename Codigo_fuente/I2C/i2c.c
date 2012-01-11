@@ -4,6 +4,8 @@ Definicion de paquetes
 
 #include <i2c.h>
 #include <stdio.h>
+#include <USI_I2CMaster.h>                  // For using the USI module
+#include <MSP430_SWI2C_Master.h>            // For using GPIO bit-bangin
 
 
 /** variables
@@ -24,9 +26,8 @@ int i2c_transmit (int dest, int len, char* data);
  * La salida es un entero que establece si la transmision fue realizada con exito o no.
  */
 
-int i2c_transmit (int dest, int len, char* data)
+int i2c_transmit (unsigned char destino, int largo, char* data)
 {
-
 
 }
 
