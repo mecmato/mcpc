@@ -4,8 +4,8 @@ Definicion de paquetes
 
 #include <i2c.h>
 #include <stdio.h>
-#include <USI_I2CMaster.h>                  // For using the USI module
-#include <MSP430_SWI2C_Master.h>            // For using GPIO bit-bangin
+#include <USI_I2CMaster.h>                  // Para usar el módulo USI
+#include <MSP430_SWI2C_Master.h>            // Para usar el bit-banging de GPIO
 
 
 /** variables
@@ -21,9 +21,10 @@ int i2c_transmit (int dest, int len, char* data);
 
 
 /**
- * La funcion i2c_transmit esta encargada de la transmision de datos al bus I2C
- * Recibe como parametros el destino de la transmision de datos (int), y un string con los datos a transmitir
- * La salida es un entero que establece si la transmision fue realizada con exito o no.
+ * La funcion i2c_transmit esta encargada de la transmisión de datos al bus I2C
+ * Recibe como parámetros el destino de la transmisión de datos (int), el la cantidad de bytes a transmitir (int largo),
+ * y un string con los datos a transmitir.
+ * La salida es un entero que establece si la transmisión fue realizada con éxito o no.
  */
 
 int i2c_transmit (unsigned char destino, int largo, char* data)
