@@ -27,9 +27,10 @@ int i2c_transmit (int dest, int len, char* data);
  * La salida es un entero que establece si la transmisión fue realizada con éxito o no.
  */
 
-int i2c_transmit (unsigned char destino, int largo, char* data)
-{
-
+int i2c_transmit (unsigned char destino, unsigned int largo, char* data)
+{	
+	p = void* data
+	MSP430_SWI2CMST_writeBlock(destino, largo, p); 
 }
 
 
