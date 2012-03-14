@@ -1,14 +1,14 @@
 //******************************************************************************
-//  MSP430F54x Demo - USCI_B0 I2C Master TX multiple bytes to MSP430 Slave
+//  MSP430F54x Demo - USCI_B0 I2C Master TX single bytes to MSP430 Slave
 //
 //  Description: This demo connects two MSP430's via the I2C bus. The master
-//  transmits to the slave. This is the MASTER CODE. It cntinuously
-//  transmits an array of data and demonstrates how to implement an I2C
-//  master transmitter sending multiple bytes using the USCI_B0 TX interrupt.
+//  transmits to the slave. This is the master code. It continuously
+//  transmits 00h, 01h, ..., 0ffh and demonstrates how to implement an I2C
+//  master transmitter sending a single byte using the USCI_B0 TX interrupt.
 //  ACLK = n/a, MCLK = SMCLK = BRCLK = default DCO = ~1.045MHz
 //
 //                                /|\  /|\
-//                MSP430F5438     10k  10k      MSP430F5438
+//                MSP430F5438     10k  10k     MSP430F5438
 //                   slave         |    |         master
 //             -----------------   |    |   -----------------
 //           -|XIN  P3.1/UCB0SDA|<-|----+->|P3.1/UCB0SDA  XIN|-
@@ -17,25 +17,16 @@
 //            |     P3.2/UCB0SCL|<-+------>|P3.2/UCB0SCL     |
 //            |                 |          |                 |
 //
-//   P. Thanigai / W. Goh
+//   M Smertneck / W. Goh
 //   Texas Instruments Inc.
-//   November 2008
+//   September 2008
 //   Built with CCE Version: 3.2.2 and IAR Embedded Workbench Version: 4.11B
 //******************************************************************************
 
 #include "msp430x54x.h"
 
-unsigned char *PTxData;                     // Pointer to TX data
+unsigned char TXData;
 unsigned char TXByteCtr;
-
-const unsigned char TxData[] =              // Table of data to transmit
-{
-  0x11,
-  0x22,
-  0x33,
-  0x44,
-  0x55
-};
 
 void main(void)
 {
@@ -50,27 +41,26 @@ void main(void)
   UCB0CTL1 &= ~UCSWRST;                     // Clear SW reset, resume operation
   UCB0IE |= UCTXIE;                         // Enable TX interrupt
 
+  TXData = 0x01;                            // Holds TX data
+
   while (1)
   {
-    __delay_cycles(50);                     // Delay required between transaction
-    PTxData = (unsigned char *)TxData;      // TX array start address
-                                            // Place breakpoint here to see each
-                                            // transmit operation.
-    TXByteCtr = sizeof TxData;              // Load TX byte counter
+    TXByteCtr = 1;                          // Load TX byte counter
 
+    while (UCB0CTL1 & UCTXSTP);             // Ensure stop condition got sent
     UCB0CTL1 |= UCTR + UCTXSTT;             // I2C TX, start condition
-
-    __bis_SR_register(LPM0_bits + GIE);     // Enter LPM0, enable interrupts
+   
+    __bis_SR_register(LPM0_bits + GIE);     // Enter LPM0 w/ interrupts
     __no_operation();                       // Remain in LPM0 until all data
                                             // is TX'd
-    while (UCB0CTL1 & UCTXSTP);             // Ensure stop condition got sent
+                                              
+    TXData++;                               // Increment data byte
   }
 }
 
 //------------------------------------------------------------------------------
-// The USCIAB0TX_ISR is structured such that it can be used to transmit any
-// number of bytes by pre-loading TXByteCtr with the byte count. Also, TXData
-// points to the next byte to transmit.
+// The USCIAB0_ISR is structured such that it can be used to transmit any
+// number of bytes by pre-loading TXByteCtr with the byte count.
 //------------------------------------------------------------------------------
 #pragma vector = USCI_B0_VECTOR
 __interrupt void USCI_B0_ISR(void)
@@ -83,10 +73,10 @@ __interrupt void USCI_B0_ISR(void)
   case  6: break;                           // Vector  6: STTIFG
   case  8: break;                           // Vector  8: STPIFG
   case 10: break;                           // Vector 10: RXIFG
-  case 12:                                  // Vector 12: TXIFG
+  case 12:                                  // Vector 12: TXIFG  
     if (TXByteCtr)                          // Check TX byte counter
     {
-      UCB0TXBUF = *PTxData++;               // Load TX buffer
+      UCB0TXBUF = TXData;                   // Load TX buffer
       TXByteCtr--;                          // Decrement TX byte counter
     }
     else
@@ -95,6 +85,7 @@ __interrupt void USCI_B0_ISR(void)
       UCB0IFG &= ~UCTXIFG;                  // Clear USCI_B0 TX int flag
       __bic_SR_register_on_exit(LPM0_bits); // Exit LPM0
     }
+    break;
   default: break;
   }
 }

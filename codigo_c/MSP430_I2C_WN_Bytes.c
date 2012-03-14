@@ -1,3 +1,22 @@
+//*****************************************************************************
+//                         MSP430 Envio_N_Bytes
+//  Transmision de un detreminado numero de bytes desde un MSP430 a otro MSP430.
+// Esta funcion se invoca a continuacion de la MSP430_I2C_Command.c, funcion 
+// que no genera una condicion de stop para no perder control sobre el bus.
+// 
+// !!!!!!Considerar que si esto no funciona es necesario implementar el envio 
+// de la instruccion dentro de esta funcion. Otra opcion es gnerar una 
+// condicion de Start repetida con la misma dir del esclavo.
+//
+// Manejar la posibilidad de pasarle como parametro una estructura con los 
+// datos en lugar de declarar variables y utilizar un switch.
+//
+//  Se utiliza parte del codigo del archivo MSP430x54x_uscib0_i2c_08.c,
+//  cuya desscripcion se incluye a a continuacion. A differencia del archivo 
+//  original, este no manda la informacion en forma repetida, si no que lo hace
+//  solo una vez.
+//*****************************************************************************
+//
 //******************************************************************************
 //  MSP430F54x Demo - USCI_B0 I2C Master TX multiple bytes to MSP430 Slave
 //
@@ -28,30 +47,22 @@
 unsigned char *PTxData;                     // Pointer to TX data
 unsigned char TXByteCtr;
 
-const unsigned char TxData[] =              // Table of data to transmit
-{
-  0x11,
-  0x22,
-  0x33,
-  0x44,
-  0x55
-};
 
-void main(void)
+void MSP430_I2C_N_Bytes(unsigned int Inst, unsigned char *PTxData,  )
 {
-  WDTCTL = WDTPW + WDTHOLD;                 // Stop WDT
-  P3SEL |= 0x06;                            // Assign I2C pins to USCI_B0
-  UCB0CTL1 |= UCSWRST;                      // Enable SW reset
+  WDTCTL = WDTPW + WDTHOLD;                 // Stop WDT - por el debugger
+ 
+  0UCB0CTL1 |= UCSWRST;                      // Enable SW reset
   UCB0CTL0 = UCMST + UCMODE_3 + UCSYNC;     // I2C Master, synchronous mode
   UCB0CTL1 = UCSSEL_2 + UCSWRST;            // Use SMCLK, keep SW reset
   UCB0BR0 = 12;                             // fSCL = SMCLK/12 = ~100kHz
   UCB0BR1 = 0;
-  UCB0I2CSA = 0x48;                         // Slave Address is 048h
   UCB0CTL1 &= ~UCSWRST;                     // Clear SW reset, resume operation
   UCB0IE |= UCTXIE;                         // Enable TX interrupt
-
-  while (1)
+  
+  
   {
+
     __delay_cycles(50);                     // Delay required between transaction
     PTxData = (unsigned char *)TxData;      // TX array start address
                                             // Place breakpoint here to see each
@@ -98,3 +109,11 @@ __interrupt void USCI_B0_ISR(void)
   default: break;
   }
 }
+
+
+
+/******************************************************************************
+
+ P3SEL |= 0x06;                            // Assign I2C pins to USCI_B0
+ UCB0I2CSA = 0x48;                         // Slave Address is 048h
+ 
