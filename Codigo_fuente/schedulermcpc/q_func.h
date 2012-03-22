@@ -10,7 +10,7 @@
 //#define DEBUG_QF
 
 /** Tamaño de la cola*/
-#define QF_SIZE
+#define QF_SIZE 3
 
 /** Estructura representativa de la cola 
        
