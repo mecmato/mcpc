@@ -1,7 +1,7 @@
 #ifndef TASK_LIST_H
 #define TASK_LIST_H
 
-#define LIST_SIZE
+#define LIST_SIZE 5
 
 ///Define una interfaz para la manipulacion de tareas
 // iterativas que se deben ejecutar segun una freuecnia relativa
