@@ -21,14 +21,14 @@ static void task_empty(void);
 //habilita la ISR del timer del scheduler
 static void mcpc_scheduler_isr_ie(void){
 
-	TBCCTLO |= CCIE;
+	TBCCTL0 |= CCIE;
 
 }
 
 //deshabilita la ISR del timer del scheduler
 static void mcpc_scheduler_isr_id(void){
 
-	TBCCTLO &= ~CCIE;
+	TBCCTL0 &= ~CCIE;
 
 }
 
