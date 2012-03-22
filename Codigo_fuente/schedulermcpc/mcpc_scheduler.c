@@ -43,8 +43,9 @@ void mcpc_scheduler_init(void){
 
 //planifica una tarea con la cuenta inicial y los turnos que se saltea. Devuelve el numero de tarea asignado
 //para poder referenciarlo luego.
-int mcpc_scheduler_add(mcpc_task_t task, int max_count, int init_count, int hailita){
-  
+int mcpc_scheduler_add(mcpc_task_t task, int max_count, int init_count, int habilita){
+
+if (habilita == 1){
   int ret = 0;
 
   tarea_t auxtask;
@@ -63,8 +64,8 @@ int mcpc_scheduler_add(mcpc_task_t task, int max_count, int init_count, int hail
   mcpc_scheduler_isr_ie();
 
   return ret;
+	}
 }
-
 //agrega una tarea para ejecutar. Esta pensada para que una tarea pueda
 //agregar otra en la cola mientras se esta ejecutando. 
 //no se debe usar dentro de una ISR
