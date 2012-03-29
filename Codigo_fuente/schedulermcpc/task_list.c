@@ -26,13 +26,9 @@ void task_list_init(task_list_t* lista){
 int task_list_add(task_list_t* lista,tarea_t tarea){
 
         int ret = 0;
-
         if(lista->length == LIST_SIZE) return -1;
-
         ret = (lista->length)++;
-
         lista->tareas[(lista->length)-1] = tarea;
-
         return ret;
 
 }

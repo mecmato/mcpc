@@ -9,8 +9,8 @@
 /// descomentar #define para hacer debug con la funcion degug_print_queue(...)
 //#define DEBUG_QF
 
-/** TamaÃ±o de la cola*/
-#define QF_SIZE 3
+/** Tamaño de la cola*/
+#define QF_SIZE 10
 
 /** Estructura representativa de la cola 
        
@@ -64,12 +64,11 @@ int is_empty(q_func_t* queue);
 */
 int is_full(q_func_t* queue);
 
-        #ifdef DEBUG_QF
-        /** Herramienta para debug
-                @param queue Cola que sera imprimida en la salida estandar
-                @param message Mensaje para imprimir junto con la cola
-        */
-        void debug_print_queue(q_func_t* queue,char* message);
-
-        #endif
+//#ifdef DEBUG_QF
+//        /** Herramienta para debug
+//                @param queue Cola que sera imprimida en la salida estandar
+//               @param message Mensaje para imprimir junto con la cola
+//        */
+//        void debug_print_queue(q_func_t* queue,char* message);
+//        #endif
 #endif

@@ -1,11 +1,14 @@
 #ifndef MCPC_SCHEDULER_H
 #define MCPC_SCHEDULER_H
 
+#include "q_func.h"
+#include "task_list.h"
+
 //tipo funcion void que devuelve void
 typedef void (*mcpc_task_t)(void);
 
 //inicializa el scheduler
-void mcpc_scheduler_init(void);
+void mcpc_scheduler_init(tarea_t lista_tareas[]);
 
 //planifica una tarea
 int mcpc_scheduler_add(mcpc_task_t task, int max_count, int init_count, int habilita);
@@ -25,6 +28,8 @@ int mcpc_scheduler_ejecutar(mcpc_task_t);
 
 //comienza la ejecucion de tareas
 void mcpc_scheduler_start(void);
+
+void atencion_interrupcion(void);
 
 #endif
 
