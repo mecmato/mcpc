@@ -6,7 +6,7 @@ Implementacion del scheduler: lista de tareas a ejecutar en el loop principal de
 #include "mcpc_scheduler.h"
 #include "q_func.h"
 #include "task_list.h"
-#include "msp430x54x.h"
+#include "msp430x54xA.h"
 
 
 //cola que contiene la lista de tareas a ejecutar en el loop principal
@@ -24,7 +24,7 @@ static void task_empty(void);
 //habilita la ISR del timer del scheduler
 static void mcpc_scheduler_isr_ie(void){
 
-	TBCCTL0 |= CCIE;
+        TBCCTL0 = CCIE;
 
 }
 
@@ -66,8 +66,9 @@ int mcpc_scheduler_add(mcpc_task_t task, int max_count, int init_count, int habi
   mcpc_scheduler_isr_ie();
   }
   return ret;
-	}
 }
+  
+
 
 //agrega una tarea para ejecutar. Esta pensada para que una tarea pueda
 //agregar otra en la cola mientras se esta ejecutando. 
@@ -103,7 +104,7 @@ void mcpc_scheduler_start(void){
   //en principio solo el Scheduler Timer ISR es el unico que 
   //puede insertar tareas en la cola de ejecucion.
     mcpc_scheduler_isr_id();
-
+    
     empty = is_empty(&mcpc_tasks_q);
     if(!empty) task = remove_element(&mcpc_tasks_q);
 
