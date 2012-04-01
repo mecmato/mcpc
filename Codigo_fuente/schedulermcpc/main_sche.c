@@ -1,5 +1,5 @@
 
-#include "msp430x54x.h"
+#include "msp430x54xA.h"
 #include "mcpc_scheduler.h"
 #include "task_list.h"
 
@@ -13,10 +13,14 @@ void main(){
   
   WDTCTL = WDTPW + WDTHOLD;                 // Stop WDT
   P1DIR |= 0x01;                            // Set P1.0 to output direction
+  
+  
+  // configuracion del timer
   TBCCTL0 = CCIE;                           // Interrupt enabled
-  //TBCCR0 =1000-1;
-  TBCCR0 =5000;
-  TBCTL = TBSSEL_1 + MC_1 + TBCLR ;         // ACLK, upmode, clear TBR
+  TBCCR0 =1000;
+  TBCTL = TBSSEL_1 + MC_1 + TBCLR;         // ACLK, upmode, clear TBR
+  
+  
   static tarea_t lista_tareas[LIST_SIZE];
       
   lista_tareas[0].counter = 3;
@@ -45,15 +49,11 @@ void main(){
   lista_tareas[4].hab = 1;
   
   mcpc_scheduler_init(lista_tareas);
-  mcpc_scheduler_start();
-  
-  //sacar después
-  //atencion_interrupcion();
   
   __bis_SR_register(LPM3_bits + GIE);       // Enter LPM3, enable interrupts
+  mcpc_scheduler_start();
   __no_operation();                         // For debugger  
-
-  
+ 
 }
 
 // Timer B0 interrupt service routine
@@ -61,7 +61,6 @@ void main(){
 __interrupt void TIMERB0_ISR(void)
 {
     P1OUT ^= 0x01;                          // Toggle P1.0 using exclusive-OR
-    TBCCR0 +=5000;
     atencion_interrupcion();                // Atencion a interrupcion
 }
 
